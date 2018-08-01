@@ -1,0 +1,31 @@
+obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCT4XXP) += wct4xxp.o
+
+FIRM_DIR	:= ../firmware
+
+EXTRA_CFLAGS += -I$(src)/.. -I$(src)/../oct612x/ $(shell $(src)/../oct612x/octasic-helper cflags $(src)/../oct612x) -Wno-undef
+
+# The OCT612X source files are from a vendor drop and we do not want to edit
+# them to make this warning go away. Therefore, turn off the
+# unused-but-set-variable warning for this driver.
+
+EXTRA_CFLAGS += $(call cc-option, -Wno-unused-but-set-variable)
+
+ifeq ($(HOTPLUG_FIRMWARE),yes)
+  EXTRA_CFLAGS+=-DHOTPLUG_FIRMWARE
+endif
+
+wct4xxp-objs := base.o vpm450m.o
+
+ifneq ($(HOTPLUG_FIRMWARE),yes)
+wct4xxp-objs += $(FIRM_DIR)/dahdi-fw-oct6114-064.o $(FIRM_DIR)/dahdi-fw-oct6114-128.o $(FIRM_DIR)/dahdi-fw-oct6114-256.o
+$(warning WARNING: You are compiling firmware into wct4xxp.ko which is not available under the terms of the GPL. It may be a violation of the GPL to distribute the resulting image since it combines both GPL and non-GPL work. You should consult a lawyer of your own before distributing such an image.)
+endif
+
+$(obj)/$(FIRM_DIR)/dahdi-fw-oct6114-064.o: $(obj)/base.o
+	$(MAKE) -C $(obj)/$(FIRM_DIR) dahdi-fw-oct6114-064.o
+
+$(obj)/$(FIRM_DIR)/dahdi-fw-oct6114-128.o: $(obj)/base.o
+	$(MAKE) -C $(obj)/$(FIRM_DIR) dahdi-fw-oct6114-128.o
+
+$(obj)/$(FIRM_DIR)/dahdi-fw-oct6114-256.o: $(obj)/base.o
+	$(MAKE) -C $(obj)/$(FIRM_DIR) dahdi-fw-oct6114-256.o

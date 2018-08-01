@@ -1,0 +1,18 @@
+obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_VOICEBUS) += dahdi_voicebus.o
+
+dahdi_voicebus-objs := voicebus.o GpakCust.o GpakApi.o voicebus_net.o vpmoct.o
+
+FIRM_DIR	:= ../firmware
+
+ifneq ($(HOTPLUG_FIRMWARE),yes)
+dahdi_voicebus-objs += $(FIRM_DIR)/dahdi-fw-vpmoct032.o
+$(warning WARNING: You are compiling firmware into voicebus.ko which is not available under the terms of the GPL. It may be a violation of the GPL to distribute the resulting image since it combines both GPL and non-GPL work. You should consult a lawyer of your own before distributing such an image.)
+else
+  EXTRA_CFLAGS+=-DHOTPLUG_FIRMWARE
+endif
+
+EXTRA_CFLAGS += -I$(src)/.. -Wno-undef
+
+$(obj)/$(FIRM_DIR)/dahdi-fw-vpmoct032.o: $(obj)/voicebus.o
+	$(MAKE) -C $(obj)/$(FIRM_DIR) dahdi-fw-vpmoct032.o
+
