@@ -3001,11 +3001,14 @@ static struct proc_dir_entry *proc_frame;
 
 static int frame_proc_show(struct seq_file *m, void *v)
 {
-	unsigned char sBuf[1024];
+	unsigned char *sBuf;
 	char str[10];
 	int i;
 
-	*sBuf = 0;
+	sBuf = kzalloc(1024, GFP_KERNEL);
+	if (sBuf == NULL)
+		return -ENOMEM;
+
 	strcat(sBuf, "Rxbuffp0:");
 	for (i = 0; i < 8; i++) {
 		sprintf(str, "%x ", readp0[i]);
@@ -3023,6 +3026,8 @@ static int frame_proc_show(struct seq_file *m, void *v)
 	strcat(sBuf, "\n");
 
 	seq_printf(m, "frame in the tx/rx buf\n%s dma rx count: %d\n tx count: %d\n interrupt count: %d\n offhook: %d\nCS_A: %x\n", sBuf, rcnt, tcnt, intcnt, fxohookchecked, *(i2s_registers+CS_A));
+
+	kfree(sBuf);
 	return 0;
 }
 
