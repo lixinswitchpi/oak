@@ -566,7 +566,6 @@ static int __wait_access(struct wctdm *wc, int card)
 
     #define MAX 6000 /* attempts */
 
-
     /* Wait for indirect access */
     while (count++ < MAX)
 	 {
@@ -616,7 +615,7 @@ static int wctdm_proslic_setreg_indirect(struct wctdm *wc, int card, unsigned ch
 }
 
 static int wctdm_proslic_getreg_indirect(struct wctdm *wc, int card, unsigned char address)
-{ 
+{
 	unsigned long flags;
 	int res = -1;
 	char *p=NULL;
@@ -658,12 +657,12 @@ static int wctdm_proslic_init_indirect_regs(struct wctdm *wc, int card)
 }
 
 static int wctdm_proslic_verify_indirect_regs(struct wctdm *wc, int card)
-{ 
+{
 	int passed = 1;
 	unsigned short i, initial;
 	int j;
 
-	for (i=0; i<sizeof(indirect_regs) / sizeof(indirect_regs[0]); i++) 
+	for (i=0; i<sizeof(indirect_regs) / sizeof(indirect_regs[0]); i++)
 	{
 		if((j = wctdm_proslic_getreg_indirect(wc, card, (unsigned char) indirect_regs[i].address)) < 0) {
 			printk(KERN_NOTICE "Failed to read indirect register %d\n", i);
@@ -676,7 +675,7 @@ static int wctdm_proslic_verify_indirect_regs(struct wctdm *wc, int card)
 			 printk(KERN_NOTICE "!!!!!!! %s  iREG %X = %X  should be %X\n",
 				indirect_regs[i].name,indirect_regs[i].address,j,initial );
 			 passed = 0;
-		}	
+		}
 	}
 
     if (passed) {
@@ -720,7 +719,7 @@ static inline void wctdm_voicedaa_check_hook(struct wctdm *wc, int card)
 
 #ifndef AUDIO_RINGCHECK
 	unsigned char res;
-#endif	
+#endif
 	signed char b;
 	int errors = 0;
 	struct fxo *fxo = &wc->mod[card].fxo;
@@ -730,7 +729,7 @@ static inline void wctdm_voicedaa_check_hook(struct wctdm *wc, int card)
 	if ((b & 0x2) || !(b & 0x8)) {
 		/* Not good -- don't look at anything else */
 		if (debug)
-			printk(KERN_DEBUG "Error (%02x) on card %d!\n", b, card + 1); 
+			printk(KERN_DEBUG "Error (%02x) on card %d!\n", b, card + 1);
 		errors++;
 	}
 	b &= 0x9b;
@@ -884,8 +883,8 @@ static inline void wctdm_voicedaa_check_hook(struct wctdm *wc, int card)
 				if (--fxo->battdebounce == 0) {
 					fxo->battery = BATTERY_PRESENT;
 					if (debug)
-						printk(KERN_DEBUG "BATTERY on %d/%d (%s)!\n", wc->span.spanno, card + 1, 
-						       (b < 0) ? "-" : "+");			    
+						printk(KERN_DEBUG "BATTERY on %d/%d (%s)!\n", wc->span.spanno, card + 1,
+						       (b < 0) ? "-" : "+");
 #ifdef	ZERO_BATT_RING
 					if (wc->onhook) {
 						wc->onhook = 0;
@@ -912,7 +911,7 @@ static inline void wctdm_voicedaa_check_hook(struct wctdm *wc, int card)
 			fxo->lastpol = -1;
 			fxo->polaritydebounce = POLARITY_DEBOUNCE / MS_PER_CHECK_HOOK;
 		}
-	} 
+	}
 	if (fxo->lastpol <= 0) {
 		if (b > 0) {
 			fxo->lastpol = 1;
@@ -932,8 +931,8 @@ static inline void wctdm_voicedaa_check_hook(struct wctdm *wc, int card)
 		if (--fxo->polaritydebounce == 0) {
 		    if (fxo->lastpol != fxo->polarity) {
 				if (debug)
-					printk(KERN_DEBUG "%lu Polarity reversed (%d -> %d)\n", jiffies, 
-				       fxo->polarity, 
+					printk(KERN_DEBUG "%lu Polarity reversed (%d -> %d)\n", jiffies,
+				       fxo->polarity,
 				       fxo->lastpol);
 				if (fxo->polarity)
 					dahdi_qevent_lock(wc->chans[card], DAHDI_EVENT_POLARITY);
@@ -1036,7 +1035,7 @@ static inline void wctdm_proslic_check_hook(struct wctdm *wc, int card)
 				/* Off hook */
 #if 1
 				if (debug)
-#endif				
+#endif
 					printk(KERN_DEBUG "wctdm: Card %d Going off hook\n", card);
 
 				switch (fxs->lasttxhook) {
@@ -1057,12 +1056,12 @@ static inline void wctdm_proslic_check_hook(struct wctdm *wc, int card)
 				if (robust)
 					wctdm_init_proslic(wc, card, 1, 0, 1);
 				fxs->oldrxhook = 1;
-			
+
 			} else if (fxs->oldrxhook && !fxs->debouncehook) {
 				/* On hook */
 #if 1
 				if (debug)
-#endif				
+#endif
 					printk(KERN_DEBUG "wctdm: Card %d Going on hook\n", card);
 				wctdm_fxs_hooksig(wc, card, DAHDI_TXSIG_ONHOOK);
 				dahdi_hooksig(wc->chans[card], DAHDI_RXSIG_ONHOOK);
@@ -1080,7 +1079,6 @@ void process_int_in_here(struct tdm_pi_dev *master)
 	int x;
 	int mode;
 
-
 	for (x=0;x<4;x++) {
 		if (wc->cardflag & (1 << x) &&
 		    (wc->modtype[x] == MOD_TYPE_FXS)) {
@@ -1091,7 +1089,7 @@ void process_int_in_here(struct tdm_pi_dev *master)
 				fxs->ohttimer = OHT_TIMER << 3;
 
 				/* logical XOR 3 variables
-				    module parameter 'reversepolarity', global reverse all FXS lines. 
+				    module parameter 'reversepolarity', global reverse all FXS lines.
 				    ioctl channel variable fxs 'reversepolarity', Line Reversal Alert Signal if required.
 				    ioctl channel variable fxs 'vmwi_lrev', VMWI pending.
 				 */
@@ -1201,7 +1199,7 @@ static int wctdm_proslic_insane(struct wctdm *wc, int card)
 	insane_report=0;
 
 	blah = wctdm_getreg(wc, card, 0);
-	if (debug) 
+	if (debug)
 		printk(KERN_DEBUG "ProSLIC on module %d, product %d, version %d\n", card, (blah & 0x30) >> 4, (blah & 0xf));
 
 #if 0
@@ -1218,7 +1216,7 @@ static int wctdm_proslic_insane(struct wctdm *wc, int card)
 		printk(KERN_NOTICE "ProSLIC 3210 version %d is too old\n", blah & 0xf);
 		return -1;
 	}
-	if (wctdm_getreg(wc, card, 1) & 0x80) 
+	if (wctdm_getreg(wc, card, 1) & 0x80)
 		/* ProSLIC 3215, not a 3210 */
 		wc->flags[card] |= FLAG_3215;
 
@@ -1246,7 +1244,7 @@ static int wctdm_proslic_insane(struct wctdm *wc, int card)
 	/* Just be sure it's setup right. */
 	wctdm_setreg(wc, card, 30, 0);
 
-	if (debug) 
+	if (debug)
 		printk(KERN_DEBUG "ProSLIC on module %d seems sane.\n", card);
 	return 0;
 }
@@ -1379,7 +1377,7 @@ static int wctdm_proslic_manual_calibrate(struct wctdm *wc, int card){
 /*******************************The following is the manual gain mismatch calibration****************************/
 /*******************************This is also available as a function *******************************************/
 	// Delay 10ms
-	origjiffies=jiffies; 
+	origjiffies=jiffies;
 	while((jiffies-origjiffies)<1);
 	wctdm_proslic_setreg_indirect(wc, card, 88, 0);
 	wctdm_proslic_setreg_indirect(wc, card, 89, 0);
@@ -1394,7 +1392,7 @@ static int wctdm_proslic_manual_calibrate(struct wctdm *wc, int card){
 	for ( i=0x1f; i>0; i--)
 	{
 		wctdm_setreg(wc, card, 98, i);
-		origjiffies=jiffies; 
+		origjiffies=jiffies;
 		while((jiffies-origjiffies)<4);
 		if((wctdm_getreg(wc, card, 88)) == 0)
 			break;
@@ -1403,7 +1401,7 @@ static int wctdm_proslic_manual_calibrate(struct wctdm *wc, int card){
 	for ( i=0x1f; i>0; i--)
 	{
 		wctdm_setreg(wc, card, 99, i);
-		origjiffies=jiffies; 
+		origjiffies=jiffies;
 		while((jiffies-origjiffies)<4);
 		if((wctdm_getreg(wc, card, 89)) == 0)
 			break;
@@ -1436,7 +1434,7 @@ static int wctdm_proslic_calibrate(struct wctdm *wc, int card)
 	int x;
 	/* Perform all calibrations */
 	wctdm_setreg(wc, card, 97, 0x1f);
-	
+
 	/* Begin, no speedup */
 	wctdm_setreg(wc, card, 96, 0x5f);
 
@@ -1448,7 +1446,7 @@ static int wctdm_proslic_calibrate(struct wctdm *wc, int card)
 			return -1;
 		}
 	}
-	
+
 	if (debug) {
 		/* Print calibration parameters */
 		printk(KERN_DEBUG "Calibration Vector Regs 98 - 107: \n");
@@ -1618,7 +1616,7 @@ static int wctdm_init_voicedaa(struct wctdm *wc, int card, int fast, int manual,
 		/* Enable ring detector full-wave rectifier mode */
 		wctdm_setreg(wc, card, 18, 2);
 		wctdm_setreg(wc, card, 24, 0);
-	} else { 
+	} else {
 		/* Set to the device defaults */
 		wctdm_setreg(wc, card, 18, 0);
 		wctdm_setreg(wc, card, 24, 0x19);
@@ -1667,7 +1665,7 @@ static int wctdm_init_voicedaa(struct wctdm *wc, int card, int fast, int manual,
 		return -1;
 	}
 	if (debug)
-		printk(KERN_DEBUG "ISO-Cap is now up, line side: %02x rev %02x\n", 
+		printk(KERN_DEBUG "ISO-Cap is now up, line side: %02x rev %02x\n",
 		       wctdm_getreg(wc, card, 11) >> 4,
 		       (wctdm_getreg(wc, card, 13) >> 2) & 0xf);
 	/* Enable on-hook line monitor */
@@ -1682,12 +1680,12 @@ static int wctdm_init_voicedaa(struct wctdm *wc, int card, int fast, int manual,
 		printk(KERN_INFO "Adjusting gain\n");
 		wctdm_set_hwgain(wc, card, 7, 1);
 	}
-	
+
 	if(debug)
 		printk(KERN_DEBUG "DEBUG fxotxgain:%i.%i fxorxgain:%i.%i\n", (wctdm_getreg(wc, card, 38)/16)?-(wctdm_getreg(wc, card, 38) - 16) : wctdm_getreg(wc, card, 38), (wctdm_getreg(wc, card, 40)/16)? -(wctdm_getreg(wc, card, 40) - 16):wctdm_getreg(wc, card, 40), (wctdm_getreg(wc, card, 39)/16)? -(wctdm_getreg(wc, card, 39) - 16) : wctdm_getreg(wc, card, 39),(wctdm_getreg(wc, card, 41)/16)?-(wctdm_getreg(wc, card, 41) - 16):wctdm_getreg(wc, card, 41));
 
 	return 0;
-		
+
 }
 
 static int wctdm_init_proslic(struct wctdm *wc, int card, int fast, int manual, int sane)
@@ -1703,14 +1701,14 @@ static int wctdm_init_proslic(struct wctdm *wc, int card, int fast, int manual, 
 	/* Sanity check the ProSLIC */
 	if (!sane && wctdm_proslic_insane(wc, card))
 		return -2;
-	
+
 	/* default messages to none and method to FSK */
 	memset(&fxs->vmwisetting, 0, sizeof(fxs->vmwisetting));
 	fxs->vmwi_lrev = 0;
 	fxs->vmwi_hvdc = 0;
 	fxs->vmwi_hvac = 0;
-	
-				
+
+
 	/* By default, don't send on hook */
 	if (!reversepolarity != !fxs->reversepolarity)
 		fxs->idletxhookstate = SLIC_LF_ACTIVE_REV;
@@ -1874,19 +1872,19 @@ static int wctdm_init_proslic(struct wctdm *wc, int card, int fast, int manual, 
 	if(fxstxgain || fxsrxgain) {
 		r9 = wctdm_getreg(wc, card, 9);
 		switch (fxstxgain) {
-		
+
 			case 35:
 				r9+=8;
 				break;
 			case -35:
 				r9+=4;
 				break;
-			case 0: 
+			case 0:
 				break;
 		}
-	
+
 		switch (fxsrxgain) {
-			
+
 			case 35:
 				r9+=2;
 				break;
@@ -1995,7 +1993,7 @@ static int wctdm_ioctl(struct dahdi_chan *chan, unsigned int cmd, unsigned long 
 			stats.tipvolt = (signed char)wctdm_getreg(wc, chan->chanpos - 1, 29) * 1000;
 			stats.ringvolt = (signed char)wctdm_getreg(wc, chan->chanpos - 1, 29) * 1000;
 			stats.batvolt = (signed char)wctdm_getreg(wc, chan->chanpos - 1, 29) * 1000;
-		} else 
+		} else
 			return -EINVAL;
 		if (copy_to_user((__user void *)data, &stats, sizeof(stats)))
 			return -EFAULT;
@@ -2062,7 +2060,7 @@ static int wctdm_ioctl(struct dahdi_chan *chan, unsigned int cmd, unsigned long 
 		wctdm_set_hwgain(wc, chan->chanpos-1, hwgain.newgain, hwgain.tx);
 
 		if (debug)
-			printk(KERN_DEBUG "Setting hwgain on channel %d to %d for %s direction\n", 
+			printk(KERN_DEBUG "Setting hwgain on channel %d to %d for %s direction\n",
 				chan->chanpos-1, hwgain.newgain, hwgain.tx ? "tx" : "rx");
 		break;
 	default:
@@ -2117,7 +2115,7 @@ static int wctdm_close(struct dahdi_chan *chan)
 		fxs->idletxhookstate = idlehookstate;
 	}
 	/* If we're dead, release us now */
-	if (!wc->usecount && wc->dead) 
+	if (!wc->usecount && wc->dead)
 		wctdm_release(wc);
 	return 0;
 }
@@ -2402,7 +2400,6 @@ static void fx_auto_detect(struct wctdm *wc) {
 
 	return ;
 }
-
 
 static int wctdm_hardware_init(struct wctdm *wc)
 {
@@ -3172,10 +3169,7 @@ module_param(fxorxgain, int, 0600);
 module_param(fxstxgain, int, 0600);
 module_param(fxsrxgain, int, 0600);
 
-
-
 MODULE_DESCRIPTION("Pi TDM module");
 MODULE_AUTHOR("Xin Li");
 MODULE_LICENSE("GPL v2");
-
 
