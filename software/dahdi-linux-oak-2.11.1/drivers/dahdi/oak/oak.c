@@ -1171,7 +1171,7 @@ void process_int_in_here(struct tdm_pi_dev *master)
 		}
 		if (!(wc->intcount % 10000)) {
 			/* Accept an alarm once per 10 seconds */
-			for (x=0; x<4; x++){ 
+			for (x = 0; x < NUM_CARDS; x++) {
 				if (wc->modtype[x] == MOD_TYPE_FXS) {
 					if (wc->mod[x].fxs.palarms)
 						wc->mod[x].fxs.palarms--;
