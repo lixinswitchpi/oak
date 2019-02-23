@@ -69,5 +69,5 @@ apt install libncurses5-dev uuid-dev libjansson-dev libxml2-dev libsqlite3-dev o
 Download the asterisk-13.20.0 and recompile it, remember to check up the chan-dahdi
 
 ### The detailed manual
-Please check out the detailed manaul in https://switchpi.com/2018/08/09/manual-of-install-oak-module/
+Please check out the detailed manaul in https://switchpi.com/manual-of-install-oak-module/
 
